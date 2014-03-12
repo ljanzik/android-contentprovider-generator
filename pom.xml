@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.thoughtsonmobile.android</groupId>
@@ -74,6 +76,13 @@
 
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
+        </extensions>
         <plugins>
 
             <plugin>
@@ -85,29 +94,29 @@
                 </configuration>
             </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.2</version>
-                    <configuration>
-                        <goalPrefix>content-provider</goalPrefix>
-                        <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>mojo-descriptor</id>
-                            <goals>
-                                <goal>descriptor</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>help-goal</id>
-                            <goals>
-                                <goal>helpmojo</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <goalPrefix>content-provider</goalPrefix>
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>mojo-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>help-goal</id>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <!-- Use mvn versions:display-dependency-updates to show new versions of dependencies, or mvn versions:use-latest-versions to update the pom. -->
             <plugin>
@@ -136,7 +145,8 @@
                                 <pomInclude>*/pom.xml</pomInclude>
                             </pomIncludes>
                             <postBuildHookScript>verify</postBuildHookScript>
-                            <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                            <localRepositoryPath>${project.build.directory}/local-repo
+                            </localRepositoryPath>
                             <settingsFile>src/it/settings.xml</settingsFile>
                             <goals>
                                 <goal>clean</goal>
@@ -161,8 +171,10 @@
 
     <scm>
         <url>https://github.com/ljanzik/android-contentprovider-generator/tree/maven-plugin</url>
-        <connection>scm:git:git@github.com:ljanzik/android-contentprovider-generator.git</connection>
-        <developerConnection>scm:git:git@github.com:ljanzik/android-contentprovider-generator.git</developerConnection>
+        <connection>scm:git:git@github.com:ljanzik/android-contentprovider-generator.git
+        </connection>
+        <developerConnection>scm:git:git@github.com:ljanzik/android-contentprovider-generator.git
+        </developerConnection>
     </scm>
 
     <distributionManagement>
