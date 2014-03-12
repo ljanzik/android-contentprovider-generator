@@ -22,7 +22,7 @@
           <configuration>
               <outputDir>${project.build.directory}/generated-classes</outputDir>
               <inputDir>${project.basedir}/sample</inputDir>
-              <className>Example</className>
+              <providerClassName>Example</providerClassName>
               <databaseFileName>test.db</databaseFileName>
               <enableForeignKeys>true</enableForeignKeys>
               <packageId>de.test</packageId>

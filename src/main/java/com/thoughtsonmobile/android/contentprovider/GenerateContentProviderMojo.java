@@ -57,7 +57,7 @@ public class GenerateContentProviderMojo extends AbstractMojo {
     private String authority;
 
     @Parameter(required = true)
-    private String className;
+    private String providerClassName;
 
     @Parameter(required = true)
     private String databaseFileName;
@@ -84,11 +84,12 @@ public class GenerateContentProviderMojo extends AbstractMojo {
     private File outputDir;
 
     public void execute() throws MojoExecutionException {
-
         try {
             loadModel(inputDir);
             generateColumns();
             generateWrappers();
+            generateContentProvider();
+            generateSqliteHelper();
         } catch (IOException e) {
             throw new MojoExecutionException("IOException", e);
         } catch (JSONException e) {
@@ -96,8 +97,56 @@ public class GenerateContentProviderMojo extends AbstractMojo {
         } catch (TemplateException e) {
             throw new MojoExecutionException("TemplateException", e);
         }
-        // generateContentProvider(arguments);
-        // generateSqliteHelper(arguments);
+    }
+
+    private void generateSqliteHelper() throws IOException, JSONException,
+            TemplateException {
+        final Template template = freemarkerConfig.getTemplate("templates/sqlitehelper.ftl");
+        final File providerDir = new File(outputDir,
+                targetPackage.replace('.', '/'));
+        providerDir.mkdirs();
+
+        final File outputFile = new File(providerDir,
+                sqliteHelperClassName + ".java");
+        final Writer out = new OutputStreamWriter(new FileOutputStream(outputFile));
+
+        final Map<String, Object> root = new HashMap<String, Object>();
+        root.put("authority", authority);
+        root.put("providerClassName", providerClassName);
+        root.put("sqliteHelperClassName", sqliteHelperClassName);
+        root.put("projectPackageId", packageId);
+        root.put("providerJavaPackage", targetPackage);
+        root.put("model", Model.get());
+        root.put("databaseFileName", databaseFileName);
+        root.put("enableForeignKeys", enableForeignKeys);
+        root.put("header", Model.get().getHeader());
+        root.put("model", Model.get());
+        root.put("header", Model.get().getHeader());
+
+        template.process(root, out);
+    }
+
+    private void generateContentProvider() throws IOException,
+            JSONException, TemplateException {
+        final Template template = freemarkerConfig.getTemplate("templates/contentprovider.ftl");
+        final File providerDir = new File(outputDir,
+                targetPackage.replace('.', '/'));
+        providerDir.mkdirs();
+
+        final File outputFile = new File(providerDir,
+                providerClassName + ".java");
+        final Writer out = new OutputStreamWriter(new FileOutputStream(outputFile));
+
+        final Map<String, Object> root = new HashMap<String, Object>();
+        root.put("authority", authority);
+        root.put("providerClassName", providerClassName);
+        root.put("sqliteHelperClassName", sqliteHelperClassName);
+        root.put("projectPackageId", packageId);
+        root.put("providerJavaPackage", targetPackage);
+        root.put("model", Model.get());
+        root.put("header", Model.get().getHeader());
+
+        template.process(root, out);
     }
 
     private void generateWrappers() throws IOException, JSONException,
@@ -192,7 +241,7 @@ public class GenerateContentProviderMojo extends AbstractMojo {
         final Map<String, Object> root = new HashMap<String, Object>();
         root.put("config", inputDir);
         root.put("providerJavaPackage", targetPackage);
-        root.put("providerClassName", className);
+        root.put("providerClassName", providerClassName);
         root.put("header", Model.get().getHeader());
 
         // Entities
