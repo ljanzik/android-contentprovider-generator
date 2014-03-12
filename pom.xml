@@ -1,13 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.jraf</groupId>
-    <artifactId>android_contentprovider_generator</artifactId>
-    <version>1.5</version> <!-- Do not forget to update Constants.VERSION, and the sample, and README.md when updating this value -->
-    <packaging>jar</packaging>
+    <groupId>com.thoughtsonmobile.android</groupId>
+    <artifactId>thoughtsonmobile-contentprovider-plugin</artifactId>
+    <version>1.0-SNAPSHOT</version><!-- Do not forget to update Constants.VERSION, and the sample, and README.md when updating this value -->
+    <packaging>maven-plugin</packaging>
 
-    <name>GenerateAndroidProvider</name>
-    <url>http://JRAF.org/code</url>
+    <name>Generate Android ContentProvider Maven Plugin</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -58,6 +57,23 @@
             <version>1.32</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>3.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>3.0.8</version>
+        </dependency>
+
     </dependencies>
 
 
@@ -73,6 +89,30 @@
                 </configuration>
             </plugin>
 
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>3.2</version>
+                    <configuration>
+                        <goalPrefix>content-provider</goalPrefix>
+                        <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>mojo-descriptor</id>
+                            <goals>
+                                <goal>descriptor</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>help-goal</id>
+                            <goals>
+                                <goal>helpmojo</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
             <!-- Use mvn versions:display-dependency-updates to show new versions of dependencies, or mvn versions:use-latest-versions to update the pom. -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -80,31 +120,6 @@
                 <version>2.1</version>
             </plugin>
 
-            <!-- Use mvn package to generate the jar -->
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>assembly-single</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.jraf.androidcontentprovidergenerator.Main</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <finalName>android-contentprovider-generator-${project.version}-bundle</finalName>
-                    <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
