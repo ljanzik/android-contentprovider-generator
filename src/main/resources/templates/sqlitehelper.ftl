@@ -1,7 +1,7 @@
 <#if header??>
 ${header}
 </#if>
-package ${config.providerJavaPackage};
+package ${providerJavaPackage};
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -13,15 +13,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.util.Log;
 
-import ${config.projectPackageId}.BuildConfig;
+import ${projectPackageId}.BuildConfig;
 <#list model.entities as entity>
-import ${config.providerJavaPackage}.${entity.nameLowerCase}.${entity.nameCamelCase}Columns;
+import ${providerJavaPackage}.${entity.nameLowerCase}.${entity.nameCamelCase}Columns;
 </#list>
 
-public class ${config.sqliteHelperClassName} extends SQLiteOpenHelper {
-    private static final String TAG = ${config.sqliteHelperClassName}.class.getSimpleName();
+public class ${sqliteHelperClassName} extends SQLiteOpenHelper {
+    private static final String TAG = ${sqliteHelperClassName}.class.getSimpleName();
 
-    public static final String DATABASE_FILE_NAME = "${config.databaseFileName}";
+    public static final String DATABASE_FILE_NAME = "${databaseFileName}";
     private static final int DATABASE_VERSION = 1;
 
     // @formatter:off
@@ -54,7 +54,7 @@ public class ${config.sqliteHelperClassName} extends SQLiteOpenHelper {
     </#list>
     // @formatter:on
 
-    public static ${config.sqliteHelperClassName} newInstance(Context context) {
+    public static ${sqliteHelperClassName} newInstance(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             return newInstancePreHoneycomb(context);
         }
@@ -66,11 +66,11 @@ public class ${config.sqliteHelperClassName} extends SQLiteOpenHelper {
      * Pre Honeycomb.
      */
 
-    private static ${config.sqliteHelperClassName} newInstancePreHoneycomb(Context context) {
-        return new ${config.sqliteHelperClassName}(context, DATABASE_FILE_NAME, null, DATABASE_VERSION);
+    private static ${sqliteHelperClassName} newInstancePreHoneycomb(Context context) {
+        return new ${sqliteHelperClassName}(context, DATABASE_FILE_NAME, null, DATABASE_VERSION);
     }
 
-    private ${config.sqliteHelperClassName}(Context context, String name, CursorFactory factory, int version) {
+    private ${sqliteHelperClassName}(Context context, String name, CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
@@ -80,12 +80,12 @@ public class ${config.sqliteHelperClassName} extends SQLiteOpenHelper {
      */
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private static ${config.sqliteHelperClassName} newInstancePostHoneycomb(Context context) {
-        return new ${config.sqliteHelperClassName}(context, DATABASE_FILE_NAME, null, DATABASE_VERSION, new DefaultDatabaseErrorHandler());
+    private static ${sqliteHelperClassName} newInstancePostHoneycomb(Context context) {
+        return new ${sqliteHelperClassName}(context, DATABASE_FILE_NAME, null, DATABASE_VERSION, new DefaultDatabaseErrorHandler());
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private ${config.sqliteHelperClassName}(Context context, String name, CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
+    private ${sqliteHelperClassName}(Context context, String name, CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
     }
 
@@ -103,7 +103,7 @@ public class ${config.sqliteHelperClassName} extends SQLiteOpenHelper {
         </#list>
     }
 
-    <#if config.enableForeignKeys >
+    <#if enableForeignKeys >
     @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);

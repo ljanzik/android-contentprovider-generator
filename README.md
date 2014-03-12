@@ -1,7 +1,11 @@
-Android ContentProvider Generator
-=================================
+Android ContentProvider Maven Plugin
+====================================
 
-A tool to generate an Android ContentProvider.
+This project is based on [Android ContentProvider Generator](https://github.com/BoD/android-contentprovider-generator)
+by [Benoit Lubek](https://github.com/BoD)
+
+
+A Maven Plugin to generate an Android ContentProvider.
 It takes a set of entity (a.k.a "table") definitions as the input, and generates:
 - a `ContentProvider` class
 - a `SQLiteOpenHelper` class
@@ -13,22 +17,28 @@ It takes a set of entity (a.k.a "table") definitions as the input, and generates
 How to use
 ----------
 
-### The `_config.json` file
+### The configure the Plugin
 
 This is where you declare a few parameters that will be used to generate the code.
 
 These are self-explanatory so here is an example:
-```json
-{
-	"toolVersion": "1.5",
-	"projectPackageId": "com.example.app",
-	"authority": "com.example.app.provider",
-	"providerJavaPackage": "com.example.app.provider",
-	"providerClassName": "ExampleProvider",
-	"sqliteHelperClassName": "ExampleSQLiteOpenHelper",
-	"databaseFileName": "example.db",
-	"enableForeignKeys": true,
-}
+```xml
+<plugin>
+  <groupId>com.thoughtsonmobile.android</groupId>
+  <artifactId>thoughtsonmobile-contentprovider-plugin</artifactId>
+  <version>1.0-SNAPSHOT</version>
+    <configuration>
+      <outputDir>${project.build.directory}/generated-sources</outputDir>
+      <inputDir>${project.basedir}/sample</inputDir>
+      <providerClassName>ExampleProvider</providerClassName>
+      <databaseFileName>example.db</databaseFileName>
+      <enableForeignKeys>true</enableForeignKeys>
+      <packageId>de.example</packageId>
+      <targetPackage>de.example.generated</targetPackage>
+      <sqliteHelperClassName>ExampleSqliteHelper</sqliteHelperClassName>
+      <authority>de.example.entities</authority>
+   </configuration>
+</plugin>
 ```
 
 ### Entity files
@@ -93,22 +103,18 @@ Here is a `person.json` file as an example:
 }
 ```
 
-A more comprehensive example is available in the `etc/sample` folder.
-
 ### The `header.txt` file (optional)
 
 If a `header.txt` file is present, its contents will be inserted at the top of every generated file.
 
-### Get the app
+### Get the plugin
 
 Download the jar from here:
-https://github.com/BoD/android-contentprovider-generator/releases/latest
+http://github.com/ljanzik/android-contentprovider-generator/releases/latest
 
-### Run the app
+### Run the plugin
 
-`java -jar android-contentprovider-generator-1.5-bundle.jar -i <input folder> -o <output folder>`
-- Input folder: where to find _config.json and your entity json files
-- Output folder: where the resulting files will be generated
+`mvn content-provider:generate`
 
 ### Use the generated files
 
@@ -151,9 +157,9 @@ Building
 
 You need maven to build this app.
 
-`mvn package`
+`mvn install`
 
-This will produce `android-contentprovider-generator-1.5-bundle.jar` in the `target` folder.
+This will install the plugin to your local repository
 
 
 Licence

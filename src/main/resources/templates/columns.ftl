@@ -1,19 +1,19 @@
 <#if header??>
 ${header}
 </#if>
-package ${config.providerJavaPackage}.${entity.nameLowerCase};
+package ${providerJavaPackage}.${entity.nameLowerCase};
 
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import ${config.providerJavaPackage}.${config.providerClassName};
+import ${providerJavaPackage}.${providerClassName};
 
 /**
  * Columns for the {@code ${entity.nameLowerCase}} table.
  */
 public interface ${entity.nameCamelCase}Columns extends BaseColumns {
     String TABLE_NAME = "${entity.nameLowerCase}";
-    Uri CONTENT_URI = Uri.parse(${config.providerClassName}.CONTENT_URI_BASE + "/" + TABLE_NAME);
+    Uri CONTENT_URI = Uri.parse(${providerClassName}.CONTENT_URI_BASE + "/" + TABLE_NAME);
 
     String _ID = BaseColumns._ID;
     <#list entity.fields as field>
