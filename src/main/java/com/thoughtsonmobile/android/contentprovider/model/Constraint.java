@@ -22,15 +22,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jraf.androidcontentprovidergenerator;
+package com.thoughtsonmobile.android.contentprovider.model;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+public class Constraint {
+    public static class Json {
+        public static final String NAME = "name";
+        public static final String DEFINITION = "definition";
+    }
 
-public class Log {
-    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final String mName;
+    private final String mDefinition;
 
-    public static void d(String tag, String string) {
-        System.out.println(FORMAT.format(new Date()) + " D/" + tag + " " + string);
+    public Constraint(String name, String definition) {
+        mName = name.toLowerCase();
+        mDefinition = definition.toLowerCase();
+    }
+
+    public String getNameUpperCase() {
+        return mName.toUpperCase();
+    }
+
+    public String getDefinitionUpperCase() {
+        return mDefinition.toUpperCase();
+    }
+
+    @Override
+    public String toString() {
+        return "Constraint [mName=" + mName + ", mDefinition=" + mDefinition + "]";
     }
 }
