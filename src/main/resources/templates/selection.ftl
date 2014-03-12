@@ -1,7 +1,7 @@
 <#if header??>
 ${header}
 </#if>
-package ${config.providerJavaPackage}.${entity.nameLowerCase};
+package ${providerJavaPackage}.${entity.nameLowerCase};
 
 import java.util.Date;
 
@@ -9,7 +9,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 
-import ${config.providerJavaPackage}.base.AbstractSelection;
+import ${providerJavaPackage}.base.AbstractSelection;
 
 /**
  * Selection for the {@code ${entity.nameLowerCase}} table.

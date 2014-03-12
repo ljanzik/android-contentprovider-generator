@@ -1,14 +1,14 @@
 <#if header??>
 ${header}
 </#if>
-package ${config.providerJavaPackage}.${entity.nameLowerCase};
+package ${providerJavaPackage}.${entity.nameLowerCase};
 
 import java.util.Date;
 
 import android.content.ContentResolver;
 import android.net.Uri;
 
-import ${config.providerJavaPackage}.base.AbstractContentValues;
+import ${providerJavaPackage}.base.AbstractContentValues;
 
 /**
  * Content values wrapper for the {@code ${entity.nameLowerCase}} table.

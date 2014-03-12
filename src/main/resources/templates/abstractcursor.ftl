@@ -1,7 +1,7 @@
 <#if header??>
 ${header}
 </#if>
-package ${config.providerJavaPackage}.base;
+package ${providerJavaPackage}.base;
 
 import java.util.Date;
 import java.util.HashMap;
