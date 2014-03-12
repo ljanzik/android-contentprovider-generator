@@ -3,7 +3,7 @@
 
     <groupId>com.thoughtsonmobile.android</groupId>
     <artifactId>thoughtsonmobile-contentprovider-plugin</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Generate Android ContentProvider Maven Plugin</name>
@@ -163,8 +163,7 @@
         <url>https://github.com/ljanzik/android-contentprovider-generator/tree/maven-plugin</url>
         <connection>scm:git:git@github.com:ljanzik/android-contentprovider-generator.git</connection>
         <developerConnection>scm:git:git@github.com:ljanzik/android-contentprovider-generator.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <distributionManagement>
         <repository>
