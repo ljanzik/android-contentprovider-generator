@@ -1,80 +1,95 @@
-Android ContentProvider Maven Plugin
-====================================
+Android ContentProvider Generator Gradle Plugin
+===============================================
 
 This project is based on [Android ContentProvider Generator](https://github.com/BoD/android-contentprovider-generator)
 by [Benoit Lubek](https://github.com/BoD)
 
-
-A Maven Plugin to generate an Android ContentProvider.
+A tool to generate an Android ContentProvider.
 It takes a set of entity (a.k.a "table") definitions as the input, and generates:
 - a `ContentProvider` class
 - a `SQLiteOpenHelper` class
-- one `BaseColumns` interface per entity 
+- a `SQLiteOpenHelperCallbacks` class
+- one `Columns` class per entity
 - one `Cursor` class per entity
 - one `ContentValues` class per entity
 - one `Selection` class per entity
+- one `Model` interface per entity
 
-How to use
-----------
 
-### The configure the Plugin
+How to use & How to migrate from original ContentProvider Generator
+-------------------------------------------------------------------
 
-This is where you declare a few parameters that will be used to generate the code.
+### The `_config.json` file
 
-These are self-explanatory so here is an example:
-```xml
-<plugin>
-  <groupId>com.thoughtsonmobile.android</groupId>
-  <artifactId>thoughtsonmobile-contentprovider-plugin</artifactId>
-  <version>1.0-SNAPSHOT</version>
-    <configuration>
-      <outputDir>${project.build.directory}/generated-sources</outputDir>
-      <inputDir>${project.basedir}/sample</inputDir>
-      <providerClassName>ExampleProvider</providerClassName>
-      <databaseFileName>example.db</databaseFileName>
-      <enableForeignKeys>true</enableForeignKeys>
-      <packageId>de.example</packageId>
-      <targetPackage>de.example.generated</targetPackage>
-      <sqliteHelperClassName>ExampleSqliteHelper</sqliteHelperClassName>
-      <authority>de.example.entities</authority>
-   </configuration>
-</plugin>
+The _config.json file is replaced by a gradle configuration, the commandline
+used in the original project were also moved to the build.gradle file
+
+```groovy
+//in main build.gradle
+dependencies {
+        classpath "com.thoughtsonmobile.android:tom-contentprovider-generator:1.9.3"
+}
+
+
+//in android project build.gradle
+apply plugin: 'com.thoughtsonmobile.android.cpgenerator'
+
+
+contentprovider {
+    inputDir "src/persistence" //e.g.
+    outputDir "src/main/java" //e.g.
+    packageId "com.example.demoapplication" //e.g.
+    providerJavaPackage "com.example.demoapplication.provider" //e.g.
+	projectPackageId "com.example.app" //e.g.
+	authority": "com.example.app.provider" //e.g.
+	providerJavaPackage": "com.example.app.provider" //e.g.
+	providerClassName": "ExampleProvider" //e.g.
+	sqliteOpenHelperClassName": "ExampleSQLiteOpenHelper" //e.g.
+	sqliteOpenHelperCallbacksClassName": "ExampleSQLiteOpenHelperCallbacks" //e.g.
+	databaseFileName "example.db" //e.g.
+	databaseVersion 1 //e.g.
+	enableForeignKeys true //e.g.
+	useAnnotations true //e.g.
+}
 ```
 
 ### Entity files
 
-Create one file per entity, naming it `<entity name>.json`.
+Create one file per entity, naming it `<entity_name>.json`.
 Inside each file, declare your fields (a.k.a "columns") with a name and a type.
-You can also optionally declare a default value, an index flag and a nullable flag.
+You can also optionally declare a default value, an index flag, a documentation and a nullable flag.
 
 Currently the type can be:
 - `String` (SQLite type: `TEXT`)
 - `Integer` (`INTEGER`)
 - `Long` (`INTEGER`)
 - `Float` (`REAL`)
-- `Double` (`REAL`) 
+- `Double` (`REAL`)
 - `Boolean` (`INTEGER`)
 - `Date` (`INTEGER`)
 - `byte[]` (`BLOB`)
 - `enum` (`INTEGER`).
 
-You can also optionally declare table contraints.
+You can also optionally declare table constraints.
 
 Here is a `person.json` file as an example:
 
 ```json
 {
+	"documentation": "A human being which is part of a team.",
 	"fields": [
 		{
+			"documentation": "First name of this person. For instance, John.",
 			"name": "first_name",
 			"type": "String",
-			"default_value": "John"
+			"defaultValue": "John"
 		},
 		{
+			"documentation": "Last name (a.k.a. Given name) of this person. For instance, Smith.",
 			"name": "last_name",
 			"type": "String",
 			"nullable": true,
-			"default_value": "Doe"
+			"defaultValue": "Doe"
 		},
 		{
 			"name": "age",
@@ -88,33 +103,45 @@ Here is a `person.json` file as an example:
 			"enumValues": [
 				"MALE",
 				"FEMALE",
-				"OTHER",
+				{"OTHER": "Value to use when neither male nor female"}
 			],
-			"nullable": false,
-		},
+			"nullable": false
+		}
 	],
-	
+
 	"constraints": [
 		{
 			"name": "unique_name",
-			"definition": "unique (first_name, last_name) on conflict replace"
+			"definition": "UNIQUE (first_name, last_name) ON CONFLICT REPLACE"
 		}
 	]
 }
 ```
 
+Notes:
+- An `_id` primary key field is automatically (implicitly) declared for all entities. It must not be declared in the json file.
+- `nullable` is optional (true by default).
+- if `documentation` is present the value will be copied in Javadoc blocks in the generated code.
+
+A more comprehensive sample is available in the [etc/sample](etc/sample) folder.
+
+You can also have a look at the corresponding generated code in the [etc/sample/app](etc/sample/app/src/org/jraf/androidcontentprovidergenerator/sample/provider) folder.
+
+By convention, you should name your entities and fields in lower case with words separated by '_', like in the example above.
+
 ### The `header.txt` file (optional)
 
 If a `header.txt` file is present, its contents will be inserted at the top of every generated file.
 
-### Get the plugin
+### Get the tool
 
 Download the jar from here:
-http://github.com/ljanzik/android-contentprovider-generator/releases/latest
+https://github.com/BoD/android-contentprovider-generator/releases/latest
 
-### Run the plugin
+### Run the tool
 
-`mvn content-provider:generate`
+`gradlew generatecontentprovider`
+
 
 ### Use the generated files
 
@@ -138,8 +165,9 @@ Long age = person.getAge();
 
 ```java
 PersonSelection where = new PersonSelection();
-where.firstName("John").or().age(42);
+where.firstName("John").or().age(42).orderByFirstName();
 PersonCursor person = where.query(getContentResolver());
+person.moveToNext();
 String lastName = person.getLastName();
 Long age = person.getAge();
 ```
@@ -152,14 +180,80 @@ context.getContentResolver().update(personUri, values.values(), null, null);
 ```
 
 
+Advanced usage
+--------------
+
+### Foreign key / joins
+
+There is limited support for foreign keys and joins.
+Here is an example of the syntax:
+```json
+{
+	"fields": [
+		{
+			"name": "main_team_id",
+			"type": "Long",
+			"nullable": false,
+			"foreignKey": {
+				"table": "team",
+				"onDelete": "CASCADE"
+			}
+		},
+		{
+			"name": "first_name",
+			"type": "String",
+			"nullable": false
+		},
+
+		(...)
+}
+```
+In this example, the field `main_team_id` is a foreign key referencing the primary key of the `team` table.
+- The appropriate `FOREIGN KEY` SQL constraint is generated (if `enableForeignKeys` is set to `true` in `_config.json`).
+- The `team` table will be automatically joined when querying the `person` table (only if any `team` columns are included in the projection).
+- Getters for `team` columns are generated in the `PersonCursor` wrapper.
+- Of course if `team` has foreign keys they will also be handled (and recursively).
+
+#### Limitations
+- Foreign keys always reference the `_id` column (the implicit primary key of all tables) and thus must always be of type `Long`  - by design.
+- **Only one foreign key to a particular table is allowed per table.**  In the example above only one column in `person` can point to `team`.
+- **Loops** (i.e. A has a foreign key to B and B has a foreign key to A) **aren't detected.**  The generator will infinitely loop if they exist.
+- Cases such as "A has a FK to B, B has a FK to C, A has a FK to C" generate ambiguities in the queries, because C columns appear twice.  In the [sample app](etc/sample/app/src/org/jraf/androidcontentprovidergenerator/sample/app/SampleActivity.java) you can see an example of how to deal with this case, using prefixes and aliases (SQL's `AS` keyword).
+
+
+Sample
+------
+
+A sample is available in the [demoapplication] folder.
+
+
 Building
 --------
 
-You need maven to build this app.
+Gradle is used to build this tool.
 
-`mvn install`
+`gradle install`
 
-This will install the plugin to your local repository
+This will install the plugin to your local maven repository.
+
+
+Similar tools
+-------------
+Here is a list of other tools that try to tackle the same problem.
+
+I did not have the chance to try them out.
+
+
+- https://github.com/BoD/android-contentprovider-generator (Original Project)
+- https://github.com/SimonVT/schematic
+- https://github.com/TimotheeJeannin/ProviGen
+- http://triple-t.github.io/simpleprovider/
+- https://github.com/foxykeep/ContentProviderCodeGenerator
+- https://code.google.com/p/mdsd-android-content-provider/
+- https://github.com/hamsterksu/Android-AnnotatedSQL
+- http://robotoworks.com/mechanoid/doc/db/api.html
+- https://github.com/robUx4/android-contentprovider-generator (a fork of this project that generates more code)
+- https://github.com/novoda/sqlite-analyzer (based on sql statements, not json)
 
 
 Licence
@@ -178,5 +272,5 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-*Just to be absolutely clear, this license applies to this program itself,
-not to the source it will generate!*
+__*Just to be absolutely clear, this license applies to this program itself,
+not to the source it will generate!*__
