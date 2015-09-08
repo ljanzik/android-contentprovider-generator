@@ -1,5 +1,8 @@
-Android ContentProvider Generator
-=================================
+Android ContentProvider Generator Gradle Plugin
+===============================================
+
+This project is based on [Android ContentProvider Generator](https://github.com/BoD/android-contentprovider-generator)
+by [Benoit Lubek](https://github.com/BoD)
 
 A tool to generate an Android ContentProvider.
 It takes a set of entity (a.k.a "table") definitions as the input, and generates:
@@ -13,27 +16,40 @@ It takes a set of entity (a.k.a "table") definitions as the input, and generates
 - one `Model` interface per entity
 
 
-How to use
-----------
+How to use & How to migrate from original ContentProvider Generator
+-------------------------------------------------------------------
 
 ### The `_config.json` file
 
-This is where you declare a few parameters that will be used to generate the code.
+The _config.json file is replaced by a gradle configuration, the commandline
+used in the original project were also moved to the build.gradle file
 
-These are self-explanatory so here is an example:
-```json
-{
-	"syntaxVersion": 3,
-	"projectPackageId": "com.example.app",
-	"authority": "com.example.app.provider",
-	"providerJavaPackage": "com.example.app.provider",
-	"providerClassName": "ExampleProvider",
-	"sqliteOpenHelperClassName": "ExampleSQLiteOpenHelper",
-	"sqliteOpenHelperCallbacksClassName": "ExampleSQLiteOpenHelperCallbacks",
-	"databaseFileName": "example.db",
-	"databaseVersion": 1,
-	"enableForeignKeys": true,
-	"useAnnotations": true
+```groovy
+//in main build.gradle
+dependencies {
+        classpath "com.thoughtsonmobile.android:tom-contentprovider-generator:1.9.3"
+}
+
+
+//in android project build.gradle
+apply plugin: 'com.thoughtsonmobile.android.cpgenerator'
+
+
+contentprovider {
+    inputDir "src/persistence" //e.g.
+    outputDir "src/main/java" //e.g.
+    packageId "com.example.demoapplication" //e.g.
+    providerJavaPackage "com.example.demoapplication.provider" //e.g.
+	projectPackageId "com.example.app" //e.g.
+	authority": "com.example.app.provider" //e.g.
+	providerJavaPackage": "com.example.app.provider" //e.g.
+	providerClassName": "ExampleProvider" //e.g.
+	sqliteOpenHelperClassName": "ExampleSQLiteOpenHelper" //e.g.
+	sqliteOpenHelperCallbacksClassName": "ExampleSQLiteOpenHelperCallbacks" //e.g.
+	databaseFileName "example.db" //e.g.
+	databaseVersion 1 //e.g.
+	enableForeignKeys true //e.g.
+	useAnnotations true //e.g.
 }
 ```
 
@@ -124,9 +140,8 @@ https://github.com/BoD/android-contentprovider-generator/releases/latest
 
 ### Run the tool
 
-`java -jar android_contentprovider_generator-1.9.3-bundle.jar -i <input folder> -o <output folder>`
-- Input folder: where to find `_config.json` and your entity json files
-- Output folder: where the resulting files will be generated
+`gradlew generatecontentprovider`
+
 
 ### Use the generated files
 
@@ -209,22 +224,17 @@ In this example, the field `main_team_id` is a foreign key referencing the prima
 Sample
 ------
 
-A sample is available in the [etc/sample](etc/sample) folder.
-
-You can have a look at the corresponding generated code in the [etc/sample/app](etc/sample/app/src/org/jraf/androidcontentprovidergenerator/sample/provider) folder.
-
-Here is the table shema of the sample:
-![Table shema of the sample](etc/sample/sample-schema.png?raw=true "The sample")
+A sample is available in the [demoapplication] folder.
 
 
 Building
 --------
 
-You need maven to build this tool.
+Gradle is used to build this tool.
 
-`mvn package`
+`gradle install`
 
-This will produce `android_contentprovider_generator-1.9.3-bundle.jar` in the `target` folder.
+This will install the plugin to your local maven repository.
 
 
 Similar tools
@@ -233,6 +243,8 @@ Here is a list of other tools that try to tackle the same problem.
 
 I did not have the chance to try them out.
 
+
+- https://github.com/BoD/android-contentprovider-generator (Original Project)
 - https://github.com/SimonVT/schematic
 - https://github.com/TimotheeJeannin/ProviGen
 - http://triple-t.github.io/simpleprovider/
