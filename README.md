@@ -41,11 +41,11 @@ contentprovider {
     packageId "com.example.demoapplication" //e.g.
     providerJavaPackage "com.example.demoapplication.provider" //e.g.
 	projectPackageId "com.example.app" //e.g.
-	authority": "com.example.app.provider" //e.g.
-	providerJavaPackage": "com.example.app.provider" //e.g.
-	providerClassName": "ExampleProvider" //e.g.
-	sqliteOpenHelperClassName": "ExampleSQLiteOpenHelper" //e.g.
-	sqliteOpenHelperCallbacksClassName": "ExampleSQLiteOpenHelperCallbacks" //e.g.
+	authority "com.example.app.provider" //e.g.
+	providerJavaPackage "com.example.app.provider" //e.g.
+	providerClassName "ExampleProvider" //e.g.
+	sqliteOpenHelperClassName "ExampleSQLiteOpenHelper" //e.g.
+	sqliteOpenHelperCallbacksClassName "ExampleSQLiteOpenHelperCallbacks" //e.g.
 	databaseFileName "example.db" //e.g.
 	databaseVersion 1 //e.g.
 	enableForeignKeys true //e.g.
